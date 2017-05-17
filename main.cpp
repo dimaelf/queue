@@ -376,6 +376,7 @@ int line::serch(serv& S, int n1, int n2)
     void* pinitial1 = p1->plin;
     void* pt1 = pinitial1;
     void* pt2 = p2->plin;
+
     while (1<2)
     {
         while (pt2!=0)
@@ -394,6 +395,7 @@ int line::serch(serv& S, int n1, int n2)
                         t2 = ((line*)pt2)->typenext;
                         pt1 = ((line*)pt1)->pnext;
                         pt2 = ((line*)pt2)->pnext;
+                        continue;
                     }
                     else
                     {
@@ -408,6 +410,7 @@ int line::serch(serv& S, int n1, int n2)
                         t2 = ((line*)pt2)->typenext;
                         pt1 = ((line*)pt1)->pnext;
                         pt2 = ((line*)pt2)->pnext;
+                        continue;
                     }
                     else
                     {
@@ -524,7 +527,6 @@ void line::subseq(serv& S, int lin, int len, int disp)
     {
         if (((line*)p)->pnext==0)
         {
-            printf("Yes");
             return;
         }
         ((line*)pnew)->typenext = ((line*)p)->typenext;
@@ -558,6 +560,7 @@ void line::subseq(serv& S, int lin, int len, int disp)
             }
         }
     }
+    S.incram();
 }
 
 
