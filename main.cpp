@@ -751,19 +751,19 @@ void serv::Testsub(serv& S)
     pl->pnext->pnext->pnext->plin = malloc(sizeof(in));
     ((in*)pl->pnext->pnext->pnext->plin)->setc1(1, 2, pl->pnext->pnext->pnext->type);
     line L;
-    if (L.serch(S, 1, 0)!=1)
+    if (L.serch(S, 0, 1)!=1)
         printf("Test 1 for search failed\n");
     else
         printf("Success\n");
-    if (L.serch(S, 2, 0)!=0)
+    if (L.serch(S, 0, 2)!=0)
         printf("Test 2 for search failed\n");
     else
         printf("Success\n");
-    if (L.serch(S, 3, 0)!=0)
+    if (L.serch(S, 0, 3)!=0)
         printf("Test 3 for search failed\n");
     else
         printf("Success\n");
-    if (L.serch(S, 0, 1)!=0)
+    if (L.serch(S, 1, 0)!=0)
         printf("Test 4 for search failed\n");
     else
         printf("Success\n");
@@ -867,8 +867,8 @@ int main()
     int n1, n2;
     line L;
     serv S;
-    S.Testsub(S);
-    S.printlines();
+
+    //S.printlines();
     while (ch!=0)
     {
         printf("0-quit\n1-set line\n2-concatination\n3-separation\n4-get subsequence\n5-search of subsequence\n6-to test\n");
@@ -934,6 +934,7 @@ int main()
         if (ch==6)
         {
             serv ST;
+            S.Testsub(S);
             ST.Testconcsep(ST);
             return 0;
         }
