@@ -22,6 +22,7 @@ public:
    void incram();
    void decram();
    int Testconcsep(serv& S);
+   void Testsub(serv& S);
 
 
 private:
@@ -52,6 +53,7 @@ public:
    void prin();
    int check(void* p);
    void setc1(int n1, int n2, int& t);
+   void set7(int n1, double d1, double d2, int re1, int im1, int re2, int im2, int n2, int n3, int& t);
 
 private:
    int num;
@@ -66,6 +68,7 @@ public:
    void prin();
    int check(void* p);
    void setc1(double n1, double n2, int& t);
+   void set3(double d, int re1, int im1, int re2, int im2, int& t);
 
 private:
    double num;
@@ -702,6 +705,74 @@ void comp::setc1(int n1, int n2, int n3, int n4, int& t)
     ((comp*)pnext)->im = n4;
 }
 
+void in::set7(int n1, double d1, double d2, int re1, int im1, int re2, int im2, int n2, int n3, int& t)
+{
+    t = 0;
+    num = n1;
+    pnext = malloc(sizeof(dfl));
+    ((dfl*)pnext)->setc1(d1, d2, typenext);
+    void* p;
+    p = pnext;
+
+    p = ((in*)p)->pnext;
+
+    ((in*)p)->pnext = malloc(sizeof(comp*));
+
+    ((comp*)((in*)p)->pnext)->setc1(re1, im1, re2, im2, (((in*)p)->typenext));
+
+    p = ((in*)p)->pnext;
+    p = ((in*)p)->pnext;
+    ((in*)p)->pnext = malloc(sizeof(in));
+    ((in*)((in*)p)->pnext)->setc1(n2, n3, (((in*)p)->typenext));
+}
+
+void dfl::set3(double d, int re1, int im1, int re2, int im2, int& t)
+{
+    num = d;
+    t = 1;
+    pnext = malloc(sizeof(comp));
+    ((comp*)pnext)->setc1(re1, im1, re2, im2, typenext);
+}
+
+void serv::Testsub(serv& S)
+{
+    amlines = 4;
+    pl = (pline*)malloc(sizeof(pline));
+    pl->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext->pnext->pnext=0;
+    pl->plin = malloc(sizeof(in));
+    ((in*)pl->plin)->set7(1, 2.03, 4.005, 6, 7, 8, 9, 10, 13, pl->type);
+    pl->pnext->plin = malloc(sizeof(dfl));
+    ((dfl*)pl->pnext->plin)->set3(4.005, 6, 7, 8, 9, pl->pnext->type);
+    pl->pnext->pnext->plin = malloc(sizeof(dfl));
+    ((dfl*)pl->pnext->pnext->plin)->setc1(2.03, -4.005, pl->pnext->pnext->type);
+    pl->pnext->pnext->pnext->plin = malloc(sizeof(in));
+    ((in*)pl->pnext->pnext->pnext->plin)->setc1(1, 2, pl->pnext->pnext->pnext->type);
+    line L;
+    if (L.serch(S, 1, 0)!=1)
+        printf("Test 1 for search failed\n");
+    else
+        printf("Success\n");
+    if (L.serch(S, 2, 0)!=0)
+        printf("Test 2 for search failed\n");
+    else
+        printf("Success\n");
+    if (L.serch(S, 3, 0)!=0)
+        printf("Test 3 for search failed\n");
+    else
+        printf("Success\n");
+    if (L.serch(S, 0, 1)!=0)
+        printf("Test 4 for search failed\n");
+    else
+        printf("Success\n");
+    if (L.serch(S, 1, 1)==0)
+        printf("Test 5 for search failed\n");
+    else
+        printf("Success\n");
+}
+
 int serv::Testconcsep(serv& S)
 {
     amlines = 3;
@@ -796,7 +867,7 @@ int main()
     int n1, n2;
     line L;
     serv S;
-    S.Testconcsep(S);
+    S.Testsub(S);
     S.printlines();
     while (ch!=0)
     {
