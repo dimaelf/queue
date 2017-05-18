@@ -21,6 +21,7 @@ public:
    int getam();
    void incram();
    void decram();
+   int Testconcsep(serv& S);
 
 
 private:
@@ -29,6 +30,62 @@ private:
 
 };
 
+class line
+{
+public:
+   //virtual void addel(int n);
+   int serch(serv& S, int n1, int n2);
+   void concat(serv& S, int n1, int n2);
+   int sep (serv& S, int n);
+   void subseq (serv& S, int line, int len, int disp);
+
+protected:
+   void* pnext;
+   int typenext;
+
+};
+
+class in : public line
+{
+public:
+   void addel(int n);
+   void prin();
+   int check(void* p);
+   void setc1(int n1, int n2, int& t);
+
+private:
+   int num;
+
+
+};
+
+class dfl : public line
+{
+public:
+   void addel(int n);
+   void prin();
+   int check(void* p);
+   void setc1(double n1, double n2, int& t);
+
+private:
+   double num;
+
+};
+
+class comp : public line
+{
+public:
+   void addel(int n);
+   void prin();
+   int check(void* p);
+   void setc1(int n1, int n2, int n3, int n4, int& t);
+
+private:
+   int re;
+   int im;
+
+
+};
 
 
 void serv::decram()
@@ -51,24 +108,10 @@ int serv::getam()
     return amlines;
 }
 
-class line
-{
-public:
-   //virtual void addel(int n);
-   int serch(serv& S, int n1, int n2);
-   void concat(serv& S, int n1, int n2);
-   void sep (serv& S, int n);
-   void subseq (serv& S, int line, int len, int disp);
-
-protected:
-   void* pnext;
-   int typenext;
-
-};
 
 void line::concat(serv& S, int n1, int n2)
 {
-    if ((n1>S.getam()+1)||(n2>S.getam()+1))
+    if ((n1>S.getam())||(n2>S.getam()))
     {
         printf("Error\n");
         return;
@@ -91,18 +134,8 @@ void line::concat(serv& S, int n1, int n2)
     }
     if (n1>n2)
     {
-
-        void* pt;
-        pt = p1->plin;
-        p1->plin = p2->plin;
-        p2->plin = pt;
-        int temp;
-        temp = p1->type;
-        p1->type = p2->type;
-        p2->type = temp;
-        temp = n1;
-        n1 = n2;
-        n2 = temp;
+        printf("Error\n");
+        return;
     }
     line* lp;
     lp = (line*)(p1->plin);
@@ -122,39 +155,38 @@ void line::concat(serv& S, int n1, int n2)
     S.decram();
 }
 
-void line::sep(serv& S, int n)
+int line::sep(serv& S, int n)
 {
     pline* p = S.getpl();
-    for (int i = 0; i<n-1; i++) //дошли до разделяемой очереди
+    for (int i = 0; i<n-1; i++)
     {
         p= p->pnext;
     }
-    int t= p->type;  //запомнили тип первого элемента
-    void* pl=p->plin;  //для работы в очереди
-    while (t==((line*)pl)->typenext)  //ищем другой тип
+    int t= p->type;
+    void* pl=p->plin;
+    while (t==((line*)pl)->typenext)
     {
-        if (((line*)pl)->pnext==0)   //проверяем, не дошли ли до конца
+        if (((line*)pl)->pnext==0)
         {
-            return;
+            return 0;
         }
         pl = ((line*)pl)->pnext;
     }
-    if (((line*)pl)->pnext==0)   //проверяем, не дошли ли до конца
+    if (((line*)pl)->pnext==0)
     {
-        return;
+        return 0;
     }
-    int newt = ((line*)pl)->typenext;   //запомнили новый тип
-    while (p->pnext!=0)    //бежим в конец
+    int newt = ((line*)pl)->typenext;
+    while (p->pnext!=0)
     {
         p = p->pnext;
     }
-    p->pnext = (pline*)malloc(sizeof(pline));  //добавляем новую очередь
-    p= p->pnext; //работаем с последней
-    p->type = newt; //устанавливаем нужный тип первого элемента
-    p->pnext = 0; //замыкаем
-    p->plin = ((line*)pl)->pnext; //вставляем первый элемент
-    ((line*)pl)->pnext=((line*)((line*)pl)->pnext)->pnext;  //чистим начало
-    //((line*)pl)->typenext = ((line*)((line*)pl)->pnext)->typenext;
+    p->pnext = (pline*)malloc(sizeof(pline));
+    p= p->pnext;
+    p->type = newt;
+    p->pnext = 0;
+    p->plin = ((line*)pl)->pnext;
+    ((line*)pl)->pnext=((line*)((line*)pl)->pnext)->pnext;
     void* plnew = p->plin;
     ((line*)plnew)->pnext = 0;
 
@@ -177,21 +209,9 @@ void line::sep(serv& S, int n)
     }
     S.incram();
     ((line*)p)->sep(S, S.getam());
+    return 1;
 }
 
-
-class in : public line
-{
-public:
-   void addel(int n);
-   void prin();
-   int check(void* p);
-
-private:
-   int num;
-
-
-};
 
 void in::addel(int n)
 {
@@ -218,17 +238,7 @@ int in::check(void* p)
     }
 }
 
-class dfl : public line
-{
-public:
-   void addel(int n);
-   void prin();
-   int check(void* p);
 
-private:
-   double num;
-
-};
 
 void dfl::addel(int n)
 {
@@ -254,20 +264,6 @@ int dfl::check(void* p)
         return 0;
     }
 }
-
-class comp : public line
-{
-public:
-   void addel(int n);
-   void prin();
-   int check(void* p);
-
-private:
-   int re;
-   int im;
-
-
-};
 
 void comp::addel(int n)
 {
@@ -672,15 +668,139 @@ void comp::prin()
         printf("\n");
     }
 }
+
+
+void in::setc1(int n1, int n2, int& t)
+{
+    t = 0;
+    num = n1;
+    typenext = 0;
+    pnext = malloc(sizeof(in));
+    ((in*)pnext)->pnext = 0;
+    ((in*)pnext)->num = n2;
+}
+
+void dfl::setc1(double n1, double n2, int& t)
+{
+    t = 1;
+    num = n1;
+    typenext = 1;
+    pnext = malloc(sizeof(dfl));
+    ((dfl*)pnext)->pnext = 0;
+    ((dfl*)pnext)->num = n2;
+}
+
+void comp::setc1(int n1, int n2, int n3, int n4, int& t)
+{
+    t = 2;
+    re = n1;
+    im = n2;
+    typenext = 2;
+    pnext = malloc(sizeof(comp));
+    ((comp*)pnext)->pnext = 0;
+    ((comp*)pnext)->re = n3;
+    ((comp*)pnext)->im = n4;
+}
+
+int serv::Testconcsep(serv& S)
+{
+    amlines = 3;
+    pl = (pline*)malloc(sizeof(pline));
+    pl->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext->pnext = 0;
+    pl->plin = malloc(sizeof(in));
+    ((in*)pl->plin)->setc1(1, 2, pl->type);
+    pl->pnext->plin = malloc(sizeof(comp));
+    ((comp*)pl->pnext->plin)->setc1(3, 4, 5, 6, pl->pnext->type);
+    pl->pnext->pnext->plin = malloc(sizeof(dfl));
+    ((dfl*)pl->pnext->pnext->plin)->setc1(7.08, 9.1, pl->pnext->pnext->type);
+    line L;
+    L.concat(S, 1, 2);
+    L.concat(S, 1, 2);
+    pl->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext->pnext = (pline*)malloc(sizeof(pline));
+    pl->pnext->pnext->pnext->pnext=0;
+    amlines=4;
+    pl->pnext->plin = malloc(sizeof(in));
+    ((in*)pl->pnext->plin)->setc1(1, 2, pl->pnext->type);
+    pl->pnext->pnext->plin = malloc(sizeof(comp));
+    ((comp*)pl->pnext->pnext->plin)->setc1(3, 4, 5, 6, pl->pnext->pnext->type);
+    pl->pnext->pnext->pnext->plin = malloc(sizeof(dfl));
+    ((dfl*)pl->pnext->pnext->pnext->plin)->setc1(7.08, 9.1, pl->pnext->pnext->pnext->type);
+    L.subseq(S, 1, 2, 0);
+    L.subseq(S, 1, 2, 2);
+    L.subseq(S, 1, 2, 4);
+    int f = 1;
+    if ((L.serch(S, 1, 4)!=1)||(L.serch(S, 4, 1)!=1))
+    {
+        f=0;
+    }
+    if ((L.serch(S, 2, 5)!=1)||(L.serch(S, 5, 2)!=1))
+    {
+        f=0;
+    }
+    if ((L.serch(S, 3, 6)!=1)||(L.serch(S, 6, 3)!=1))
+    {
+        f=0;
+    }
+    if (f!=0)
+    {
+        printf("Success\n");
+    }
+    else
+    {
+        printf("Test 1 for concatination failed\n");
+    }
+    L.concat(S, 2, 3);
+    L.concat(S, 2, 3);
+    L.concat(S, 1, 6);
+    L.concat(S, 1, 1);
+    L.concat(S, 2, 2);
+    if ((L.serch(S, 0, 1)!=1)||(L.serch(S, 1, 0))!=1)
+    {
+        printf("Test 2 for concatination failed\n");
+    }
+    else
+    {
+        printf("^Error means Success\n");
+    }
+    L.sep(S, 2);
+    f = 1;
+    if ((L.serch(S, 1, 2)!=1)||(L.serch(S, 2, 1)!=1))
+    {
+        f=0;
+    }
+    if ((L.serch(S, 3, 5)!=1)||(L.serch(S, 5, 3)!=1))
+    {
+        f=0;
+    }
+    if ((L.serch(S, 4, 6)!=1)||(L.serch(S, 6, 4)!=1))
+    {
+        f=0;
+    }
+    if (f!=0)
+    {
+        printf("Success\n");
+    }
+    else
+    {
+        printf("Test for separation failed\n");
+    }
+}
+
 int main()
 {
     int ch=1;
     int n1, n2;
     line L;
     serv S;
+    S.Testconcsep(S);
+    S.printlines();
     while (ch!=0)
     {
-        printf("0-quit\n1-set line\n2-concatination\n3-separation\n4-get subsequence\n5-search of subsequence\n");
+        printf("0-quit\n1-set line\n2-concatination\n3-separation\n4-get subsequence\n5-search of subsequence\n6-to test\n");
         scanf("%d", &ch);
         if (ch==1)
         {
@@ -700,7 +820,12 @@ int main()
         {
             printf("Enter line's number\n");
             scanf("%d", &ch);
-            L.sep(S, ch);
+            if (ch>S.getam())
+            {
+                printf("Error\n");
+            }
+            else
+                L.sep(S, ch);
             S.printlines();
             ch=-1;
             continue;
@@ -734,6 +859,12 @@ int main()
             }
             S.printlines();
             continue;
+        }
+        if (ch==6)
+        {
+            serv ST;
+            ST.Testconcsep(ST);
+            return 0;
         }
     }
     return 0;
