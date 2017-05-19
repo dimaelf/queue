@@ -22,7 +22,7 @@ public:
    void incram();
    void decram();
    int Testconcsep(serv& S);
-   void Testsub(serv& S);
+   void Testser(serv& S);
 
 
 private:
@@ -731,7 +731,7 @@ void dfl::set3(double d, int re1, int im1, int re2, int im2, int& t)
     ((comp*)pnext)->setc1(re1, im1, re2, im2, typenext);
 }
 
-void serv::Testsub(serv& S)
+void serv::Testser(serv& S)
 {
     amlines = 4;
     pl = (pline*)malloc(sizeof(pline));
@@ -768,6 +768,24 @@ void serv::Testsub(serv& S)
         printf("Test 5 for search failed\n");
     else
         printf("Success\n");
+    ((in*)pl->pnext->pnext->plin)->setc1(10, 13, pl->pnext->pnext->type);
+    L.subseq(S, 5, 1, 0);
+    if (amlines==4)
+    {
+        printf("^Uncorrect means success\n");
+    }
+    else
+        printf("Test 1 for subsequences failed\n");
+    L.subseq(S, 1, 3, 2);
+    if ((L.serch(S, 1, 4)==1)&&((L.serch(S, 4, 1)==1)))
+        printf("Success\n");
+    else
+        printf("Test 2 for subsequence failed\n");
+    L.subseq(S, 1, 3, 5);
+    if ((L.serch(S, 2, 5)==1)&&((L.serch(S, 2, 5)==1)))
+        printf("Success\n");
+    else
+        printf("Test 3 for subsequence failed\n");
 }
 
 int serv::Testconcsep(serv& S)
@@ -864,8 +882,6 @@ int main()
     int n1, n2;
     line L;
     serv S;
-
-    //S.printlines();
     while (ch!=0)
     {
         printf("0-quit\n1-set line\n2-concatination\n3-separation\n4-get subsequence\n5-search of subsequence\n6-to test\n");
@@ -931,7 +947,7 @@ int main()
         if (ch==6)
         {
             serv ST;
-            S.Testsub(S);
+            S.Testser(S);
             ST.Testconcsep(ST);
             return 0;
         }
