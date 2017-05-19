@@ -58,7 +58,6 @@ public:
 private:
    int num;
 
-
 };
 
 class dfl : public line
@@ -87,9 +86,14 @@ private:
    int re;
    int im;
 
-
 };
 
+
+serv::serv()
+{
+    pl = 0;
+    amlines=0;
+}
 
 void serv::decram()
 {
@@ -109,6 +113,98 @@ pline* serv::getpl()
 int serv::getam()
 {
     return amlines;
+}
+
+
+void in::addel(int n)
+{
+   scanf("%d", &num);
+   if (n==1)
+   {
+       pnext=0;
+       return;
+   }
+   pnext = malloc(sizeof (in*));
+   typenext = 0;
+   ((in*)pnext)->addel(n-1);
+}
+
+void dfl::addel(int n)
+{
+   scanf("%lf", &num);
+   if (n==1)
+   {
+       pnext=0;
+       return;
+   }
+   pnext = malloc(sizeof (dfl*));
+   typenext = 1;
+   ((dfl*)pnext)->addel(n-1);
+}
+
+void comp::addel(int n)
+{
+   scanf("%d%d", &re, &im);
+   if (n==1)
+   {
+       pnext=0;
+       return;
+   }
+   pnext = malloc(sizeof (comp*));
+   typenext = 2;
+   ((comp*)pnext)->addel(n-1);
+}
+
+void serv::addline()
+{
+   printf("Add line with int(0), float(1) or complex(2)\n");
+   int ch, am;
+   scanf("%d", &ch);
+   printf("Hom many numbers is it?\n");
+   scanf("%d", &am);
+   if (am<1)
+   {
+       return;
+   }
+   amlines++;
+   pline* p;
+   if (pl ==0)
+   {
+       pl=(pline*)malloc(sizeof(pline));
+       p = pl;
+   }
+   else
+   {
+       p = pl;
+       while (p->pnext != 0)
+       {
+           p = p->pnext;
+       }
+       p->pnext = (pline*)malloc(sizeof(pline));
+       p=p->pnext;
+   }
+    p->pnext=0;
+    printf("Enqueue elemnts\n");
+    if (ch==0)
+    {
+        p->type = 0;
+        p->plin = malloc(sizeof(in));
+        ((in*)(p->plin))->addel(am);
+        return;
+    }
+    if (ch==1)
+    {
+        p->type = 1;
+        p->plin = malloc(sizeof(dfl));
+        ((dfl*)(p->plin))->addel(am);
+        return;
+    }
+    if (ch==2)
+    {
+        p->type = 2;
+        p->plin = malloc(sizeof(comp));
+        ((comp*)(p->plin))->addel(am);
+    }
 }
 
 
@@ -216,19 +312,6 @@ int line::sep(serv& S, int n)
 }
 
 
-void in::addel(int n)
-{
-   scanf("%d", &num);
-   if (n==1)
-   {
-       pnext=0;
-       return;
-   }
-   pnext = malloc(sizeof (in*));
-   typenext = 0;
-   ((in*)pnext)->addel(n-1);
-}
-
 int in::check(void* p)
 {
     if (num == ((in*)p)->num)
@@ -239,21 +322,6 @@ int in::check(void* p)
     {
         return 0;
     }
-}
-
-
-
-void dfl::addel(int n)
-{
-   scanf("%lf", &num);
-   if (n==1)
-   {
-       pnext=0;
-       return;
-   }
-   pnext = malloc(sizeof (dfl*));
-   typenext = 1;
-   ((dfl*)pnext)->addel(n-1);
 }
 
 int dfl::check(void* p)
@@ -268,19 +336,6 @@ int dfl::check(void* p)
     }
 }
 
-void comp::addel(int n)
-{
-   scanf("%d%d", &re, &im);
-   if (n==1)
-   {
-       pnext=0;
-       return;
-   }
-   pnext = malloc(sizeof (comp*));
-   typenext = 2;
-   ((comp*)pnext)->addel(n-1);
-}
-
 int comp::check(void* p)
 {
     if ((re == ((comp*)p)->re)&&(im== ((comp*)p)->im))
@@ -290,64 +345,6 @@ int comp::check(void* p)
     else
     {
         return 0;
-    }
-}
-
-serv::serv()
-{
-    pl = 0;
-    amlines=0;
-}
-
-void serv::addline()
-{
-   printf("Add line with int(0), float(1) or complex(2)\n");
-   int ch, am;
-   scanf("%d", &ch);
-   printf("Hom many numbers is it?\n");
-   scanf("%d", &am);
-   if (am<1)
-   {
-       return;
-   }
-   amlines++;
-   pline* p;
-   if (pl ==0)
-   {
-       pl=(pline*)malloc(sizeof(pline));
-       p = pl;
-   }
-   else
-   {
-       p = pl;
-       while (p->pnext != 0)
-       {
-           p = p->pnext;
-       }
-       p->pnext = (pline*)malloc(sizeof(pline));
-       p=p->pnext;
-   }
-    p->pnext=0;
-    printf("Enqueue elemnts\n");
-    if (ch==0)
-    {
-        p->type = 0;
-        p->plin = malloc(sizeof(in));
-        ((in*)(p->plin))->addel(am);
-        return;
-    }
-    if (ch==1)
-    {
-        p->type = 1;
-        p->plin = malloc(sizeof(dfl));
-        ((dfl*)(p->plin))->addel(am);
-        return;
-    }
-    if (ch==2)
-    {
-        p->type = 2;
-        p->plin = malloc(sizeof(comp));
-        ((comp*)(p->plin))->addel(am);
     }
 }
 
